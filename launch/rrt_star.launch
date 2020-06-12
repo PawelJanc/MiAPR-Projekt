@@ -1,7 +1,7 @@
 <launch>
-<arg name="rviz_config" default="$(find mapr_5_student)/config.rviz"/>
-<include file="$(find mapr_5_student)/launch/mapa1.0.launch" />
-<node name="graph_search" pkg="mapr_5_student" type="rrt_star.py" output="screen" />
-<node name="points" pkg="mapr_5_student" type="points.py" output="screen" />
+<arg name="rviz_config" default="$(find miapr_projekt)/config.rviz"/>
+<include file="$(find miapr_projekt)/launch/mapa1.0.launch" />
+<node name="graph_search" pkg="miapr_projekt" type="rrt_star.py" output="screen" />
+<node name="points" pkg="miapr_projekt" type="points.py" output="screen" />
 <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)"/>
 </launch>

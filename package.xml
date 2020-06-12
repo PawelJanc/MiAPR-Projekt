@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>mapr_5_student</name>
+  <name>miapr_projekt</name>
   <version>0.0.0</version>
-  <description>The mapr_5_student package</description>
+  <description>The miapr_projekt package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
