@@ -1,0 +1,9 @@
+https://github.com/AtsushiSakai/PythonRobotics?fbclid=IwAR1W0EV6YZAkb4LT-QiOAJ8TjvA5vRzZ7cTrXB0zVH1fEVBqCaeYtPAYZgE
+https://github.com/dominikbelter/urdf_example?fbclid=IwAR2bSbtCr_in20veQDzyOYPbzCC2TUekuRWMJSGfxYbZQQCBOwXAbQy9_m8
+https://github.com/motion-planning/rrt-algorithms
+https://github.com/ros/urdf_sim_tutorial?fbclid=IwAR1HE4BEJyELqJL8FtH7Xcdx-XLI1nerlBec5dgYjB2MKt50fQMIR9r6dvY
+https://learn.turtlebot.com/2015/02/03/11/?fbclid=IwAR3AOWzG2h6NYv6J-odulpXrVc0mMqKK8Jzw4U9x4OCcgUYNFh3qeqe2WXE
+https://mahbub029.blogspot.com/2016/01/motion-planning-algorithm-rrt-starrrt.html?fbclid=IwAR0ULdw6746E8GaizlY52vE0BYvO4614n3lpgkr5MP3Qn7-sXfLEHl4qHbQ
+https://medium.com/@theclassytim/robotic-path-planning-rrt-and-rrt-212319121378
+https://wiki.ros.org/diff_drive_controller
+https://www.theconstructsim.com/ros-qa-053-how-to-move-a-robot-to-a-certain-point-using-twist/
