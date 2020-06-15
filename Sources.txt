@@ -1,5 +1,11 @@
+Źródła:
+
+Materiały wykładowe z przedmiotu Metody i algorytmy planowania ruchu
+Instrukcje laboratoryjne z przedmiotu Metody i algorytmy planowania ruchu
 https://github.com/AtsushiSakai/PythonRobotics?fbclid=IwAR1W0EV6YZAkb4LT-QiOAJ8TjvA5vRzZ7cTrXB0zVH1fEVBqCaeYtPAYZgE
+https://github.com/dominikbelter/example_maps
 https://github.com/dominikbelter/urdf_example?fbclid=IwAR2bSbtCr_in20veQDzyOYPbzCC2TUekuRWMJSGfxYbZQQCBOwXAbQy9_m8
+https://github.com/Kicajowyfreestyle/mapr_5_student.git
 https://github.com/motion-planning/rrt-algorithms
 https://github.com/ros/urdf_sim_tutorial?fbclid=IwAR1HE4BEJyELqJL8FtH7Xcdx-XLI1nerlBec5dgYjB2MKt50fQMIR9r6dvY
 https://learn.turtlebot.com/2015/02/03/11/?fbclid=IwAR3AOWzG2h6NYv6J-odulpXrVc0mMqKK8Jzw4U9x4OCcgUYNFh3qeqe2WXE
