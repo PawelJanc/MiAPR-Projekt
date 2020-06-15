@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Colors -->
+
+    <material name="Chrome">
+        <color rgba="220 220 220 1" />
+    </material>
+    
+    <material name="Orange">
+        <color rgba="255 60 0 1" />
+    </material>
+
+<!-- Constants -->
+    <xacro:property name="PI" value="3.1415"/>
+    
+    <xacro:property name="base_link_scale" value="0.5" />
+    <xacro:property name="base_link_mass" value="0.5" />
+    <xacro:property name="base_link_width" value="0.3" />
+    <xacro:property name="wheel_radius" value="0.04" />
+    <xacro:property name="wheel_width" value="0.01" />
+    <xacro:property name="wheel_mass" value="0.1" />
+<!-- Macros -->    
+    <xacro:macro name="base_link_inertia" params="mass">
+        <inertial>
+            <mass value="${mass}"/>
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                     iyy="1.0" iyz="0.0"
+                     izz="1.0"/>
+        </inertial>
+    </xacro:macro>
+    
+    <xacro:macro name="wheel_inertial" params="mass radius width">
+        <inertial>
+            <mass value="${mass}" />
+            <inertia ixx="${mass*(3*radius*radius+width*width)/12}" ixy="0.0" ixz="0.0"
+                    iyy="${mass*(3*radius*radius+width*width)/12}" iyz= "0.0"
+                    izz="${mass*radius*radius/2}" />
+        </inertial>
+    </xacro:macro>
+    
+<!-- Base link -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://miapr_projekt/robot_mesh.stl" scale="${base_link_scale} ${base_link_scale} ${base_link_scale}"/>
+            </geometry>
+            <material name="Orange"/>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://miapr_projekt/robot_mesh.stl" scale="${base_link_scale} ${base_link_scale} ${base_link_scale}"/>
+            </geometry>
+        </collision>
+        <xacro:base_link_inertia mass = "2" />
+    </link>
+    
+    <gazebo reference="base_link">
+        <material>
+            Gazebo/Orange
+        </material>
+        <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+
+<!-- Wheels -->    
+    <xacro:macro name="wheel" params="side Y">
+        <link name="${side}_wheel">
+            <visual>
+                <origin rpy="${PI/2} 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+                </geometry>
+                <material name="Chrome"/>
+            </visual>
+            <collision>
+                <origin rpy="${PI/2} 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+                </geometry>
+            </collision>
+            <xacro:wheel_inertial mass="0.1" radius="0.04" width="0.01"/>
+        </link>
+        <gazebo reference="${side}_wheel">
+            <mu1 value="200.0"/>
+            <mu2 value="100.0"/>
+            <kp value="10000000.0"/>
+            <kd value="1.0"/>
+            <material>
+                Gazebo/Chrome
+            </material>
+        </gazebo>
+        
+        <joint name="${side}_wheel_joint" type="continuous">
+            <parent link="base_link" />
+            <child link="${side}_wheel" />
+            <origin xyz="0 ${(base_link_width+wheel_width)/2*Y} ${wheel_radius}" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/>
+            <limit effort= "100" velocity="100"/>
+            <dynamics damping="0.0" friction="0.0"/>
+        </joint>
+        
+        <transmission name="${side}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${side}_wheel_motor">
+                <hardwareInterface>
+                    EffortJointInterface
+                </hardwareInterface>
+                <mechanicalReduction>
+                    1
+                </mechanicalReduction>
+            </actuator>
+            <joint name="${side}_wheel_joint">
+                <hardwareInterface>
+                    VelocityJointInterface
+                </hardwareInterface>
+            </joint>
+        </transmission>
+        
+    </xacro:macro>    
+    
+    <xacro:wheel side="left" Y="-1"/>
+    <xacro:wheel side="right" Y="1"/>
+    
+<!-- ros_control plugin-->
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename= "libgazebo_ros_control.so">
+            <robotNamespace>
+                /
+            </robotNamespace>
+        </plugin>
+    </gazebo>
+</robot>

@@ -1,0 +1,7 @@
+<launch>
+
+    <include file="$(find miapr_projekt)/launch/robot.launch" />
+    <include file="$(find miapr_projekt)/launch/rrt_star.launch" />
+    <node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="10 10 0 0 0 0 map odom 100" />
+    
+</launch>

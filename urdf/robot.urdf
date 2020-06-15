@@ -21,9 +21,9 @@
             </geometry>
         </collision>
         <inertial>
-			<mass value="0.5"/>
-			<inertia ixx="0.02625" ixy="0" ixz="0" iyy="0.0225" iyz="0" izz="0.02625"/>
-		</inertial>
+            <mass value="0.5"/>
+            <inertia ixx="0.02625" ixy="0" ixz="0" iyy="0.0225" iyz="0" izz="0.02625"/>
+        </inertial>
     </link>
     
     <link name="left_wheel">
@@ -41,9 +41,9 @@
             </geometry>
         </collision>
         <inertial>
-			<mass value="0.02"/>
-			<inertia ixx="8e-06" ixy="0" ixz="0" iyy="1.6e-05" iyz="0" izz="8e-05"/>
-		</inertial>
+            <mass value="0.02"/>
+            <inertia ixx="8e-06" ixy="0" ixz="0" iyy="1.6e-05" iyz="0" izz="8e-05"/>
+        </inertial>
     </link>
     
     <joint name="left_wheel_joint" type="continuous">
@@ -68,9 +68,9 @@
             </geometry>
         </collision>
         <inertial>
-			<mass value="0.02"/>
-			<inertia ixx="8e-06" ixy="0" ixz="0" iyy="1.6e-05" iyz="0" izz="8e-05"/>
-		</inertial>
+            <mass value="0.02"/>
+            <inertia ixx="8e-06" ixy="0" ixz="0" iyy="1.6e-05" iyz="0" izz="8e-05"/>
+        </inertial>
     </link>
     
     <joint name="right_wheel_joint" type="continuous">
@@ -79,5 +79,45 @@
         <origin xyz="0 0.1505 0.04"/>
         <axis xyz="0 1 0"/>
     </joint>
+    <gazebo reference="left_wheel">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <transmission name="left_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="left_wheel">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+      <joint name="left_wheel_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
     
+    <gazebo reference="right_wheel">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <transmission name="right_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="right_wheel_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+      <joint name="right_wheel_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+    </gazebo>
 </robot>

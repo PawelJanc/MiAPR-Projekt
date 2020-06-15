@@ -2,8 +2,62 @@
 import rospy as rp
 from grid_map import GridMap
 import numpy as np
+from nav_msgs.msg import Odometry
+from tf.transformations import euler_from_quaternion
+from geometry_msgs.msg import Point, Twist
+from math import atan2
 
 np.random.seed(444)
+x = 0.0
+y = 0.0
+theta = 0.0
+
+
+def newOdom(msg):
+    global x
+    global y
+    global theta
+
+    x = msg.pose.pose.position.x
+    y = msg.pose.pose.position.y
+
+    rot_q = msg.pose.pose.orientation
+    (roll, pitch, theta) = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])
+
+
+def go_to_point(goal_x, goal_y):
+
+    sub = rp.Subscriber("/robot/diff_drive_controller/odom", Odometry, newOdom)
+    pub = rp.Publisher("/robot/diff_drive_controller/cmd_vel", Twist, queue_size=1)
+
+    speed = Twist()
+    r = rp.Rate(10)
+    goal = Point()
+    goal.x = goal_x
+    goal.y = goal_y
+
+    while not rp.is_shutdown():
+        inc_x = goal.x - x
+        inc_y = goal.y - y
+
+        angle_to_goal = atan2(inc_y, inc_x)
+
+        if abs(angle_to_goal - theta) > 0.01:
+            speed.linear.x = 0.0
+            if (angle_to_goal - theta) > 0:
+                speed.angular.z = 0.1
+            else:
+                speed.angular.z = -0.1
+        else:
+            speed.linear.x = 0.3
+            speed.angular.z = 0.0
+        if inc_x < 0.01 and inc_y < 0.01:
+            speed.linear.x = 0.0
+            speed.angular.z = 0.0
+            pub.publish(speed)
+            break
+        pub.publish(speed)
+        r.sleep()
 
 
 class RRT(GridMap):
@@ -13,7 +67,14 @@ class RRT(GridMap):
         self.radius_multiplier = 5
         self.radius = self.step * self.radius_multiplier
         self.heuristics = {self.start: 0}  #define heuristics dictionary, heuristics is value of distance from start point
-        # points.py: st = Point(10.0, 10.0), en = Point(15.0, 15.0)
+        self.new_map = self.map.copy()
+        for j in range(self.map.shape[0]):
+            for i in range(self.map.shape[1]):
+                if self.map[j, i] > 50:
+                    for x in range(-4, 5):
+                        for y in range(-4, 5):
+                            if 0 <= j+x < self.map.shape[0] and 0 <= i+y < self.map.shape[1]:
+                                self.new_map[j+x, i+y] = 100
 
     def check_if_valid(self, a, b):
         """
@@ -23,8 +84,7 @@ class RRT(GridMap):
         :return: boolean
         """
         in_free_space = True
-        # linear function y= alpha * x + beta
-        alpha = (b[1]-a[1])/(b[0]-a[0])
+        alpha = (b[1]-a[1])/(b[0]-a[0])  # linear function y = alpha*x + beta
         beta = a[1] - a[0] * alpha
         if a[0] == b[0]:
             step = abs(a[1]-b[1])/100
@@ -45,7 +105,7 @@ class RRT(GridMap):
                 else:
                     test_y = a[1] - i * step
 
-            if self.map[int(test_y/self.resolution), int(test_x/self.resolution)] > 50:
+            if self.new_map[int(test_y/self.resolution), int(test_x/self.resolution)] > 50:
                 in_free_space = False
                 break
         return in_free_space
@@ -125,6 +185,10 @@ class RRT(GridMap):
             if self.check_if_valid(closest_point, new_point):
                 self.parent[new_point] = closest_point
                 self.heuristics[new_point] = self.heuristics[self.parent[new_point]] + self.calc_dist(new_point, self.parent[new_point])
+                print(len(self.parent))
+                if len(self.parent) < 100:
+                    self.radius = self.radius_multiplier*pow((np.log10(len(self.parent))/len(self.parent)), 0.5)
+                    print(self.radius)
                 self.find_new_parent(new_point)
                 if self.check_if_valid(new_point, self.end):
                     self.parent[self.end] = new_point
@@ -133,7 +197,7 @@ class RRT(GridMap):
             rp.sleep(0.5)
         print("End found")
 
-        #restore path
+        # restore path
         start_reached = False
         considered_node = self.end
         path = [considered_node]
@@ -145,10 +209,18 @@ class RRT(GridMap):
                 start_reached = True
         print("Path restored")
         self.publish_path(path)
+
+        path.reverse()
+        print("Moving robot")
+        for point in path:
+            go_to_point(point[0] - self.start[0], point[1] - self.start[1])
+        print("End reached")
+
         while not rp.is_shutdown():
             rp.sleep(0.01)
 
 
 if __name__ == '__main__':
     rrt = RRT()
+    rp.sleep(45)
     rrt.search()

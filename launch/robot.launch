@@ -1,14 +1,35 @@
 <launch>
 
-    <arg name="model" default="$(find miapr_projekt)/urdf/robot.urdf" />
-    <arg name="gui" default="true" />
-    <arg name="rvizconfig" default="$(find miapr_projekt)/robot.rviz" />
+<arg name="model" default="$(find miapr_projekt)/urdf/robot.urdf.xacro"/>
+<arg name="rvizconfig" default="$(find miapr_projekt)/config.rviz"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
-    
-    <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
-    <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
-    
+
+<!-- Launch gazebo -->
+<include file="$(find miapr_projekt)/launch/gazebo.launch">
+  <arg name="model" value="$(arg model)"/>
+ </include>
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"/>
+
+<!-- Load joint controller configuration from YAML file to parameter server -->
+<rosparam file="$(find miapr_projekt)/controller/joint_states.yaml" command="load"/>
+
+<rosparam file="$(find miapr_projekt)/controller/diff_drive.yaml" command="load"/>
+
+
+<!-- load the controllers -->
+<node name="robot_arm_controller_spawner" pkg="controller_manager" type="spawner"
+  respawn="true" output="screen" 
+   args="/robot/joint_state_controller 
+        /robot/diff_drive_controller
+        --shutdown-timeout 3"/>
+
+<!-- convert joint states to TF transforms for rviz, etc -->
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+</node>
+
 </launch>
+
+ 
+
