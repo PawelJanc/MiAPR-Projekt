@@ -185,10 +185,8 @@ class RRT(GridMap):
             if self.check_if_valid(closest_point, new_point):
                 self.parent[new_point] = closest_point
                 self.heuristics[new_point] = self.heuristics[self.parent[new_point]] + self.calc_dist(new_point, self.parent[new_point])
-                print(len(self.parent))
                 if len(self.parent) < 100:
                     self.radius = self.radius_multiplier*pow((np.log10(len(self.parent))/len(self.parent)), 0.5)
-                    print(self.radius)
                 self.find_new_parent(new_point)
                 if self.check_if_valid(new_point, self.end):
                     self.parent[self.end] = new_point
