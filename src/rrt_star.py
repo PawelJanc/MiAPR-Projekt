@@ -220,5 +220,5 @@ class RRT(GridMap):
 
 if __name__ == '__main__':
     rrt = RRT()
-    rp.sleep(45)
+    # rp.sleep(45) - unnecessary - implemented for video recording purposes
     rrt.search()
