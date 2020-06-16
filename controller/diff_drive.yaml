@@ -6,7 +6,7 @@ robot:
      left_wheel: ['left_wheel_joint']
      right_wheel: ['right_wheel_joint']
 
-     wheel_separation: 0.301
+     wheel_separation: 0.31
      wheel_radius: 0.04
      # Odometry covariances for the encoder output of the robot. These values should
      # be tuned to your robot's sample odometry data, but these values are a good place
